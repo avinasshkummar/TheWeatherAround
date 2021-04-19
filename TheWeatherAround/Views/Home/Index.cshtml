@@ -1,0 +1,120 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<script>
+    var GetWeatherDetail = '@Url.Action("WeatherDetail", "Home")';
+</script>
+
+<div class="jumbotron">
+    <h1>The Weather Around <span id="cityname"> </span></h1>
+</div>
+<h1>Search City and Get Weather Forecast</h1>
+@*<div id="ip"></div>
+    <div id="address"></div>
+    <hr />Full response: <pre id="details"></pre>*@
+<div>
+    <strong>City Name  :</strong><input id="txtCity" type="text" />
+    <br />
+    <br />
+    <button id="btnSubmit">Get Weather Forecast</button>
+</div>
+
+
+<div>
+    <h2>Weather Forecast</h2>
+    <table>
+        <tr>
+            <td>Weather Symbol Icon <img id="imgWeatherIconUrl" src="http://openweathermap.org/img/w/03d.png" title="Weather Icon" /></td>
+        </tr>
+        <tr>
+            <td>
+                <strong>City: </strong>
+                <span id="lblCity"></span>  ,
+                <span id="lblCountry"></span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>Latitude: </strong>
+                <label id="lblLat"></label><br />
+                <strong>Longitude: </strong>
+                <label id="lblLon"></label>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>Description:</strong>
+                <label id="lblDescription"></label><br />
+                <strong>Humidity:</strong>
+                <label id="lblHumidity"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Temperature (Feels Like)<label id="lblTempFeelsLike"></label><br />
+                Temperature <label id="lblTemp"></label><br />
+                Temperature (Min)<label id="lblTempMin"></label><br />
+                Temperature (Max)<label id="lblTempMax"></label><br />
+            </td>
+        </tr>
+
+
+    </table>
+</div>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script>
+    //jQuery.get("http://ipinfo.io", function (response) {
+    //    $("#ip").html("IP: " + response.ip);
+    //    $("#address").html("Location: " + response.city + ", " + response.region);
+    //    $("#details").html(JSON.stringify(response, null, 4));
+    //}, "jsonp");
+
+    $("#btnSubmit").click(function () {
+
+        var cityname = $("#txtCity").val();
+        if (cityname.length > 0) {
+            $.ajax({
+                url: GetWeatherDetail,
+                data: {
+                    City: cityname
+                },
+                dataType: "json",
+                type: "POST",
+                success: function (rsltval) {
+                    if (rsltval.status === "error") {
+                        alert("City Not Found");
+
+                    }
+                    else {
+                        var d = rsltval.Weather; //.Weather;
+                        var data = JSON.parse(d);
+                        console.log(data);
+                        $("#cityname").html(data.City);
+                        $("#lblCity").html(data.City);
+                        $("#lblCountry").text(data.Country);
+                        $("#lblLat").text(data.Lat);
+                        $("#lblLon").text(data.Lon);
+                        $("#lblDescription").text(data.Description);
+                        $("#lblHumidity").text(data.Humidity);
+                        $("#lblTempFeelsLike").text(data.TempFeelsLike);
+                        $("#lblTemp").text(data.Temp);
+                        $("#lblTempMax").text(data.TempMax);
+                        $("#lblTempMin").text(data.TempMin);
+                        $("#imgWeatherIconUrl").attr("src", "http://openweathermap.org/img/w/" + data.WeatherIcon + ".png");
+                        $("#cityWeatherIcon").attr("src", "http://openweathermap.org/img/w/" + data.WeatherIcon + ".png");
+                        //data - response from server
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        }
+        else {
+            alert("City Not Found");
+        }
+    });
+
+</script>    
